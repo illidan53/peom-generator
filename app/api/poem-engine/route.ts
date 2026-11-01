@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { examplePoem, generatePoem, PoemOptionsSchema, type TeamProfile } from "@/lib/poem-engine";
+import { exampleJueju, examplePoem, generatePoem, PoemOptionsSchema, type TeamProfile } from "@/lib/poem-engine";
 import { isClaudeCliBackend } from "@/lib/claude-cli";
 
 export const maxDuration = 300;
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   };
 
   if (!hasKey()) {
-    return Response.json({ poem: examplePoem, mock: true });
+    return Response.json({ poem: options?.style === "jueju" ? exampleJueju : examplePoem, mock: true });
   }
 
   try {
