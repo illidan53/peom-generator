@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     fallbacks: "default",
     tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 8 }],
     system:
-      "You are a poet. First research each team member on the web using only public, professional information. Then write one poem that weaves the team together with the event. Output only the poem, with a title on the first line.",
+      "You are a poet. First research each team member on the web using only public, professional information. Many names are shared by several people, so use a detail only when it clearly matches the person (same LinkedIn profile, company or role as given). If you cannot confirm who someone is, write about them from the details provided instead of borrowing a stranger's biography. Then write one poem that weaves the team together with the event. Output only the poem, with a title on the first line.",
     messages: [
       {
         role: "user",

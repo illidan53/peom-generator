@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DEMO_EVENT, DEMO_TEAM } from "@/lib/team";
 import type { Poem } from "@/lib/poem-engine/contract";
 
 type Member = { name: string; company: string; role: string; selfIntro: string };
 type Style = "modern" | "classical" | "epic" | "playful";
 
 const blank = (): Member => ({ name: "", company: "", role: "", selfIntro: "" });
+const demoTeam = (): Member[] =>
+  DEMO_TEAM.map((m) => ({ name: m.name, company: m.company ?? "", role: m.role ?? "", selfIntro: [m.intro, m.linkedin].filter(Boolean).join("，") }));
 
 const SAMPLE: Member[] = [
   { name: "成员 A", company: "某云服务公司", role: "后端工程师", selfIntro: "扛过双十一级别的流量，周末爬山，自己烘咖啡豆" },
@@ -26,9 +29,9 @@ const input =
   "mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-2.5 text-base placeholder:text-muted/60 focus:border-gold focus:outline-none disabled:opacity-60";
 
 export default function PoemPage() {
-  const [members, setMembers] = useState<Member[]>(() => Array.from({ length: 4 }, blank));
+  const [members, setMembers] = useState<Member[]>(demoTeam);
   const [teamName, setTeamName] = useState("");
-  const [eventName, setEventName] = useState("Claude Workshop Hackathon");
+  const [eventName, setEventName] = useState(DEMO_EVENT);
   const [style, setStyle] = useState<Style>("modern");
   const [stanzaCount, setStanzaCount] = useState(5);
   const [direction, setDirection] = useState("");
