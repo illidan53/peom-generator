@@ -41,7 +41,7 @@ export async function generatePoem({
   onProgress,
   signal,
 }: GeneratePoemArgs): Promise<Poem> {
-  if (isMock()) return options?.style === "jueju" ? exampleJueju : examplePoem;
+  if (isMock()) return options?.style === "modern" ? examplePoem : exampleJueju;
   if (profile.members.length === 0) throw new Error("团队资料里没有成员");
 
   const opts = PoemOptionsSchema.parse(options ?? {});

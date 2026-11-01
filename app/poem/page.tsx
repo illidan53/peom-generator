@@ -5,7 +5,6 @@ import { DEMO_EVENT, DEMO_TEAM } from "@/lib/team";
 import type { Poem } from "@/lib/poem-engine/contract";
 
 type Member = { name: string; company: string; role: string; selfIntro: string };
-type Style = "modern" | "jueju";
 
 const demoTeam = (): Member[] =>
   DEMO_TEAM.map((m) => ({ name: m.name, company: m.company ?? "", role: m.role ?? "", selfIntro: [m.intro, m.linkedin].filter(Boolean).join("，") }));
@@ -17,11 +16,6 @@ const SAMPLE: Member[] = [
   { name: "成员 D", company: "创业公司", role: "产品经理", selfIntro: "跑过三次全马，从零做过两款产品" },
 ];
 
-const STYLES: { value: Style; label: string }[] = [
-  { value: "modern", label: "现代诗（10 行以内）" },
-  { value: "jueju", label: "七言绝句" },
-];
-
 const input =
   "mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-2.5 text-base placeholder:text-muted/60 focus:border-gold focus:outline-none disabled:opacity-60";
 
@@ -29,7 +23,6 @@ export default function PoemPage() {
   const [members, setMembers] = useState<Member[]>(demoTeam);
   const [teamName, setTeamName] = useState("");
   const [eventName, setEventName] = useState(DEMO_EVENT);
-  const [style, setStyle] = useState<Style>("modern");
   const [direction, setDirection] = useState("");
 
   const [hasKey, setHasKey] = useState<boolean | null>(null);
@@ -65,7 +58,7 @@ export default function PoemPage() {
           teamName,
           event: { name: eventName || "Claude Workshop Hackathon", date: "2026-11-01" },
           members: filled,
-          options: { style },
+          options: { style: "jueju" },
           direction,
         }),
       });
@@ -88,7 +81,7 @@ export default function PoemPage() {
           为你的团队写一首诗
         </h1>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
-          填写成员信息，选择风格，Claude 会写一首献给你们和这次活动的中文短诗：10 行以内的现代诗，或一首七言绝句，并逐节播放。
+          填写成员信息，Claude 会写一首献给你们和这次活动的唐诗七言绝句，并逐句播放。
         </p>
         {hasKey === false && (
           <p className="mt-4 inline-block rounded-full border border-line-strong px-4 py-1.5 text-sm text-muted">
@@ -147,10 +140,6 @@ export default function PoemPage() {
           </label>
         </div>
 
-        <div className="mt-6">
-          <Choice label="风格" options={STYLES} value={style} onChange={setStyle} disabled={working} />
-        </div>
-
         <label className="mt-6 block text-sm font-medium">
           额外要求 <span className="font-normal text-muted">（可选，例如“提到我们做的是诗歌生成器”）</span>
           <input className={input} value={direction} disabled={working} onChange={(e) => setDirection(e.target.value)} />
@@ -172,26 +161,6 @@ export default function PoemPage() {
   );
 }
 
-function Choice<T extends string>({ label, options, value, onChange, disabled }: {
-  label: string; options: { value: T; label: string }[]; value: T; onChange: (v: T) => void; disabled: boolean;
-}) {
-  return (
-    <fieldset>
-      <legend className="text-sm font-medium">{label}</legend>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {options.map((o) => (
-          <button key={o.value} type="button" disabled={disabled} onClick={() => onChange(o.value)}
-            aria-pressed={value === o.value}
-            className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm transition-colors disabled:opacity-60 ${
-              value === o.value ? "border-gold bg-gold text-on-gold" : "border-line-strong text-muted hover:text-text"
-            }`}>
-            {o.label}
-          </button>
-        ))}
-      </div>
-    </fieldset>
-  );
-}
 
 function PoemPlayer({ poem, mock }: { poem: Poem; mock: boolean }) {
   const [current, setCurrent] = useState(0);

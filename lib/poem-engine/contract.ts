@@ -37,7 +37,7 @@ export type TeamProfile = z.infer<typeof TeamProfileSchema>;
 
 export const PoemOptionsSchema = z.object({
   language: z.enum(["zh", "en", "bilingual"]).default("zh"),
-  style: z.enum(["modern", "jueju"]).default("modern").describe("现代诗（10 行以内）/ 七言绝句"),
+  style: z.enum(["modern", "jueju"]).default("jueju").describe("七言绝句（默认）/ 现代诗（10 行以内）"),
 });
 export type PoemOptions = z.infer<typeof PoemOptionsSchema>;
 
