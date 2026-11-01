@@ -1,12 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
+import { runClaude, isClaudeCliBackend } from "../claude-cli";
 import { getModel, isMock, PoemOptionsSchema, PoemSchema, type Poem, type PoemOptions, type TeamProfile } from "./contract";
-import { examplePoem } from "./examples";
+import { exampleJueju, examplePoem } from "./examples";
+import { checkPoem } from "./check";
 import { buildUserPrompt, SYSTEM_PROMPT } from "./prompt";
 
 export * from "./contract";
-export { SYSTEM_PROMPT, STYLE_GUIDE, LANGUAGE_GUIDE, buildUserPrompt } from "./prompt";
-export { exampleTeamProfile, examplePoem } from "./examples";
+export { SYSTEM_PROMPT, FORM_GUIDE, LANGUAGE_GUIDE, buildUserPrompt } from "./prompt";
+export { checkPoem } from "./check";
+export { exampleTeamProfile, examplePoem, exampleJueju } from "./examples";
 
 export interface GeneratePoemArgs {
   profile: TeamProfile;
@@ -37,10 +40,39 @@ export async function generatePoem({
   onProgress,
   signal,
 }: GeneratePoemArgs): Promise<Poem> {
-  if (isMock()) return examplePoem;
+  if (isMock()) return options?.style === "jueju" ? exampleJueju : examplePoem;
   if (profile.members.length === 0) throw new Error("团队资料里没有成员");
 
   const opts = PoemOptionsSchema.parse(options ?? {});
+
+  // 本地开发：通过 claude 命令行（用你登录的 Claude 账号）生成，同样走结构化输出和质检
+  if (!client && isClaudeCliBackend()) {
+    const basePrompt = buildUserPrompt(profile, opts, { direction });
+    let prompt = basePrompt;
+    let chars = 0;
+    let poem: Poem | undefined;
+    for (let attempt = 0; attempt <= MAX_REVISIONS; attempt++) {
+      const result = await runClaude({
+        prompt,
+        systemPrompt: SYSTEM_PROMPT,
+        model: getModel(),
+        effort,
+        jsonSchema: POEM_JSON_SCHEMA,
+        signal,
+        onText: (t) => {
+          chars += t.length;
+          onProgress?.(chars);
+        },
+      });
+      if (result.stopReason === "refusal") throw new Error("写诗请求被拒绝");
+      poem = PoemSchema.parse(result.structured ?? JSON.parse(result.text));
+
+      const problems = checkPoem(poem, profile, opts);
+      if (problems.length === 0 || attempt === MAX_REVISIONS) break;
+      prompt = `${basePrompt}\n\n你上一版的输出：\n${JSON.stringify(poem)}\n\n这一版有以下问题，请修改后输出完整的新版本（同样的 JSON 格式）：\n${problems.map((p) => `- ${p}`).join("\n")}`;
+    }
+    return poem!;
+  }
   const anthropic = client ?? new Anthropic();
   const messages: Anthropic.Beta.BetaMessageParam[] = [
     { role: "user", content: buildUserPrompt(profile, opts, { direction }) },
@@ -95,27 +127,6 @@ export async function generatePoem({
   }
 
   return poem!;
-}
-
-/**
- * 确定性质检：只检查代码能判断的硬性要求，返回问题清单（空数组表示通过）。
- * 前端或测试里也可以单独调用。
- */
-export function checkPoem(poem: Poem, profile: TeamProfile, options: PoemOptions): string[] {
-  const problems: string[] = [];
-  if (poem.stanzas.length !== options.stanzaCount) {
-    problems.push(`要求 ${options.stanzaCount} 节，实际写了 ${poem.stanzas.length} 节。`);
-  }
-  const focusText = poem.stanzas.map((s) => s.focus).join(" ");
-  const missing = profile.members.map((m) => m.name).filter((name) => !focusText.includes(name));
-  if (missing.length > 0) {
-    problems.push(`这些成员没有出现在任何一节的 focus 里：${missing.join("、")}。focus 需与资料中的 name 完全一致。`);
-  }
-  poem.stanzas.forEach((s, i) => {
-    if (s.lines.length < 2) problems.push(`第 ${i + 1} 节只有 ${s.lines.length} 行。`);
-    if (s.imagery.length < 2) problems.push(`第 ${i + 1} 节的 imagery 少于 2 个。`);
-  });
-  return problems;
 }
 
 /** 把诗排成纯文本，方便打印或复制 */
