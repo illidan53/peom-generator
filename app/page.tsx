@@ -10,10 +10,10 @@ const empty = (): Member[] => Array.from({ length: 4 }, () => ({ name: "", info:
 const demoTeam = (): Member[] => DEMO_TEAM.map((m) => ({ name: m.name, info: describe(m) }));
 
 const STAGES = [
-  { after: 0, text: "Looking up your team on the web" },
-  { after: 7, text: "Gathering the details worth a verse" },
-  { after: 15, text: "Finding the thread that ties you together" },
-  { after: 22, text: "Writing the poem" },
+  { after: 0, text: "正在网上查找你们的资料" },
+  { after: 7, text: "正在挑选值得入诗的细节" },
+  { after: 15, text: "正在寻找把你们连在一起的线索" },
+  { after: 22, text: "正在写诗" },
 ];
 
 function Icon({ path, className = "h-5 w-5" }: { path: string; className?: string }) {
@@ -77,7 +77,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ members: filled, event }),
       });
-      if (!res.ok || !res.body) throw new Error((await res.text()) || `Request failed (${res.status})`);
+      if (!res.ok || !res.body) throw new Error((await res.text()) || `请求失败（${res.status}）`);
       const reader = res.body.getReader();
       const dec = new TextDecoder();
       let text = "";
@@ -88,7 +88,7 @@ export default function Home() {
         setPoem(text);
       }
       if (/\n\[(error|refused)\]/.test(text)) {
-        setError(text.includes("[refused]") ? "Claude declined this request. Try different details." : "Something went wrong while writing. Please try again.");
+        setError(text.includes("[refused]") ? "Claude 拒绝了这次请求，请换一些信息再试。" : "写诗时出了点问题，请重试。");
         setPoem(text.replace(/\n\[(error|refused)\][\s\S]*$/, ""));
         setStatus("error");
       } else {
@@ -119,23 +119,22 @@ export default function Home() {
     <main className="mx-auto w-full max-w-5xl px-5 pb-24 pt-14 sm:px-8 sm:pt-20">
       {/* Hero */}
       <header className="max-w-3xl">
-        <p className="text-xs font-medium uppercase tracking-[0.25em] text-gold">Claude Workshop · Hackathon</p>
+        <p className="text-xs font-medium uppercase tracking-[0.25em] text-gold">Claude Workshop · 黑客松</p>
         <h1 className="mt-5 font-display text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
-          Four people.<br />
-          <span className="italic text-gold-strong">One poem.</span>
+          四个人，<br />
+          <span className="text-gold-strong">一首诗。</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-          Tell us who is on your team. Claude reads up on each of you, then writes a poem about
-          your story and this moment.
+          告诉我们团队里有谁。Claude 会先了解你们每一个人，再为你们的故事和此刻写一首诗。
         </p>
       </header>
 
       {/* How it works */}
       <ol className="mt-12 grid gap-4 sm:grid-cols-3">
         {[
-          { icon: ICONS.people, title: "Introduce the team", text: "A name and a line about each person." },
-          { icon: ICONS.search, title: "Claude does the research", text: "Public, professional background from the web." },
-          { icon: ICONS.feather, title: "A poem is written", text: "One poem that weaves all four of you together." },
+          { icon: ICONS.people, title: "介绍团队", text: "每人一个名字，再加一句介绍。" },
+          { icon: ICONS.search, title: "Claude 查资料", text: "从网上了解公开的职业背景。" },
+          { icon: ICONS.feather, title: "写成一首诗", text: "一首把你们四个人织在一起的中文诗。" },
         ].map((s, i) => (
           <li key={s.title} className="flex gap-4 rounded-2xl border border-line bg-ink-raised/60 p-5">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-strong text-gold">
@@ -152,42 +151,42 @@ export default function Home() {
       {/* Form */}
       <form onSubmit={generate} className="mt-12 rounded-3xl border border-line bg-ink-raised/70 p-5 shadow-2xl shadow-black/30 backdrop-blur sm:p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-display text-3xl font-semibold">Your team</h2>
+          <h2 className="font-display text-3xl font-semibold">你们的团队</h2>
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-muted">{filled.length} of 4 added</span>
+            <span className="text-muted">已填 {filled.length} / 4 人</span>
             <button type="button" disabled={working} onClick={() => setMembers(demoTeam())}
-              className="min-h-11 cursor-pointer text-gold underline-offset-4 hover:underline disabled:opacity-50">Load our team</button>
+              className="min-h-11 cursor-pointer text-gold underline-offset-4 hover:underline disabled:opacity-50">载入我们的团队</button>
             <button type="button" disabled={working} onClick={() => setMembers(empty())}
-              className="min-h-11 cursor-pointer text-muted underline-offset-4 hover:text-text hover:underline disabled:opacity-50">Clear</button>
+              className="min-h-11 cursor-pointer text-muted underline-offset-4 hover:text-text hover:underline disabled:opacity-50">清空</button>
           </div>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {members.map((m, i) => (
             <fieldset key={i} className="rounded-2xl border border-line bg-ink-sunken/60 p-4 transition-colors focus-within:border-line-strong">
-              <legend className="sr-only">Member {i + 1}</legend>
+              <legend className="sr-only">成员 {i + 1}</legend>
               <div className="flex items-center gap-3">
                 <span aria-hidden="true" className={`flex h-8 w-8 items-center justify-center rounded-full font-display text-lg transition-colors ${m.name.trim() ? "bg-gold text-on-gold" : "border border-line-strong text-muted"}`}>
                   {m.name.trim() ? m.name.trim()[0].toUpperCase() : i + 1}
                 </span>
-                <span className="text-sm font-medium text-muted">Member {i + 1}</span>
+                <span className="text-sm font-medium text-muted">成员 {i + 1}</span>
               </div>
-              <label htmlFor={`name-${i}`} className="mt-4 block text-sm font-medium">Name</label>
+              <label htmlFor={`name-${i}`} className="mt-4 block text-sm font-medium">姓名</label>
               <input id={`name-${i}`} value={m.name} onChange={(e) => update(i, "name", e.target.value)}
-                autoComplete="off" placeholder="e.g. Ada Lovelace" disabled={working}
+                autoComplete="off" placeholder="例如：张三" disabled={working}
                 className="mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-3 text-base placeholder:text-muted/60 focus:border-gold focus:outline-none disabled:opacity-60" />
               <label htmlFor={`info-${i}`} className="mt-3 block text-sm font-medium">
-                About them <span className="font-normal text-muted">(optional)</span>
+                介绍 <span className="font-normal text-muted">（选填）</span>
               </label>
               <input id={`info-${i}`} value={m.info} onChange={(e) => update(i, "info", e.target.value)}
-                aria-describedby="info-help" autoComplete="off" placeholder="Company, role, school, LinkedIn…" disabled={working}
+                aria-describedby="info-help" autoComplete="off" placeholder="公司、职位、学校、LinkedIn 链接…" disabled={working}
                 className="mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-3 text-base placeholder:text-muted/60 focus:border-gold focus:outline-none disabled:opacity-60" />
             </fieldset>
           ))}
         </div>
-        <p id="info-help" className="mt-3 text-sm text-muted">Specific details help Claude find the right person.</p>
+        <p id="info-help" className="mt-3 text-sm text-muted">信息越具体，Claude 越容易找到对的人。</p>
 
-        <label htmlFor="event" className="mt-6 block text-sm font-medium">Event</label>
+        <label htmlFor="event" className="mt-6 block text-sm font-medium">活动</label>
         <input id="event" value={event} onChange={(e) => setEvent(e.target.value)} disabled={working}
           className="mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-3 text-base focus:border-gold focus:outline-none disabled:opacity-60" />
 
@@ -202,10 +201,10 @@ export default function Home() {
             ) : (
               <Icon path={ICONS.feather} />
             )}
-            {working ? "Writing…" : "Write our poem"}
+            {working ? "正在写…" : "为我们写诗"}
           </button>
-          {!filled.length && <p className="text-sm text-muted">Add at least one name to begin.</p>}
-          {working && <p className="text-sm text-muted">This usually takes 20–40 seconds.</p>}
+          {!filled.length && <p className="text-sm text-muted">至少填一个名字才能开始。</p>}
+          {working && <p className="text-sm text-muted">通常需要 20 到 40 秒。</p>}
         </div>
       </form>
 
@@ -221,7 +220,7 @@ export default function Home() {
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gold" />
                   </span>
                   {stage.text}…
-                  <span className="text-muted">{elapsed}s</span>
+                  <span className="text-muted">{elapsed} 秒</span>
                 </p>
                 <div className="mt-10 space-y-4" aria-hidden="true">
                   <div className="shimmer h-8 w-2/3 rounded-lg bg-line" />
@@ -253,13 +252,13 @@ export default function Home() {
                   <button type="button" onClick={copy}
                     className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line-strong px-5 text-sm font-medium transition-colors duration-200 hover:border-gold hover:text-gold">
                     <Icon path={copied ? ICONS.check : ICONS.copy} className="h-4 w-4" />
-                    {copied ? "Copied" : "Copy poem"}
+                    {copied ? "已复制" : "复制诗"}
                   </button>
                 )}
                 <button type="button" onClick={() => { setStatus("idle"); setPoem(""); setError(""); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                   className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-line-strong px-5 text-sm font-medium transition-colors duration-200 hover:border-gold hover:text-gold">
                   <Icon path={ICONS.refresh} className="h-4 w-4" />
-                  Start over
+                  重新开始
                 </button>
               </div>
             )}
@@ -267,7 +266,7 @@ export default function Home() {
         )}
       </section>
 
-      <footer className="mt-20 text-center text-sm text-muted">Made at the Claude Workshop · Powered by Claude</footer>
+      <footer className="mt-20 text-center text-sm text-muted">做于 Claude Workshop · 由 Claude 驱动</footer>
     </main>
   );
 }
