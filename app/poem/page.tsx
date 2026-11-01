@@ -5,7 +5,6 @@ import type { Poem } from "@/lib/poem-engine/contract";
 
 type Member = { name: string; company: string; role: string; selfIntro: string };
 type Style = "modern" | "classical" | "epic" | "playful";
-type Lang = "zh" | "en" | "bilingual";
 
 const blank = (): Member => ({ name: "", company: "", role: "", selfIntro: "" });
 
@@ -23,12 +22,6 @@ const STYLES: { value: Style; label: string }[] = [
   { value: "playful", label: "俏皮" },
 ];
 
-const LANGS: { value: Lang; label: string }[] = [
-  { value: "zh", label: "中文" },
-  { value: "en", label: "English" },
-  { value: "bilingual", label: "双语" },
-];
-
 const input =
   "mt-1.5 w-full rounded-xl border border-line bg-ink px-3.5 py-2.5 text-base placeholder:text-muted/60 focus:border-gold focus:outline-none disabled:opacity-60";
 
@@ -37,7 +30,6 @@ export default function PoemPage() {
   const [teamName, setTeamName] = useState("");
   const [eventName, setEventName] = useState("Claude Workshop Hackathon");
   const [style, setStyle] = useState<Style>("modern");
-  const [language, setLanguage] = useState<Lang>("zh");
   const [stanzaCount, setStanzaCount] = useState(5);
   const [direction, setDirection] = useState("");
 
@@ -74,7 +66,7 @@ export default function PoemPage() {
           teamName,
           event: { name: eventName || "Claude Workshop Hackathon", date: "2026-11-01" },
           members: filled,
-          options: { style, language, stanzaCount },
+          options: { style, stanzaCount },
           direction,
         }),
       });
@@ -97,7 +89,7 @@ export default function PoemPage() {
           为你的团队写一首诗
         </h1>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
-          填写成员信息，选择风格，Claude 会写一首献给你们和这次活动的诗，并逐节播放。
+          填写成员信息，选择风格，Claude 会写一首献给你们和这次活动的中文诗，并逐节播放。
         </p>
         {hasKey === false && (
           <p className="mt-4 inline-block rounded-full border border-line-strong px-4 py-1.5 text-sm text-muted">
@@ -156,9 +148,8 @@ export default function PoemPage() {
           </label>
         </div>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-3">
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           <Choice label="风格" options={STYLES} value={style} onChange={setStyle} disabled={working} />
-          <Choice label="语言" options={LANGS} value={language} onChange={setLanguage} disabled={working} />
           <label className="block text-sm font-medium">
             节数：{stanzaCount}
             <input type="range" min={2} max={8} value={stanzaCount} disabled={working}

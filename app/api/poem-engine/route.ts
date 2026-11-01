@@ -57,7 +57,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const poem = await generatePoem({ profile, options, direction, effort: "medium", signal: req.signal });
+    const poem = await generatePoem({ profile, options: { ...options, language: "zh" }, direction, effort: "medium", signal: req.signal });
     return Response.json({ poem, mock: false });
   } catch (e) {
     return Response.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
