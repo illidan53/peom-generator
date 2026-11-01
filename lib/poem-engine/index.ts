@@ -25,6 +25,7 @@ export interface GeneratePoemArgs {
 }
 
 /** 结构化输出用的 JSON Schema。API 不接受 $schema 字段，去掉它。 */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- 只是为了把 $schema 去掉
 const { $schema: _drop, ...POEM_JSON_SCHEMA } = z.toJSONSchema(PoemSchema, { io: "output" }) as Record<string, unknown>;
 
 /** 质检不通过时最多让模型修改几次 */

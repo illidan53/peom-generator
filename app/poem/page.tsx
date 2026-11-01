@@ -7,7 +7,6 @@ import type { Poem } from "@/lib/poem-engine/contract";
 type Member = { name: string; company: string; role: string; selfIntro: string };
 type Style = "modern" | "jueju";
 
-const blank = (): Member => ({ name: "", company: "", role: "", selfIntro: "" });
 const demoTeam = (): Member[] =>
   DEMO_TEAM.map((m) => ({ name: m.name, company: m.company ?? "", role: m.role ?? "", selfIntro: [m.intro, m.linkedin].filter(Boolean).join("，") }));
 
@@ -201,14 +200,16 @@ function PoemPlayer({ poem, mock }: { poem: Poem; mock: boolean }) {
   const [copied, setCopied] = useState(false);
   const total = poem.stanzas.length;
   const stanza = poem.stanzas[current];
+  const atEnd = current >= total - 1;
+  // 播到最后一节就停：由 atEnd 推导，不在 effect 里改 state
+  const isPlaying = playing && !atEnd;
 
   useEffect(() => {
-    if (!playing || mode !== "story") return;
-    if (current >= total - 1) { setPlaying(false); return; }
+    if (!isPlaying || mode !== "story") return;
     const ms = Math.max(4000, stanza.lines.length * 2500);
     const id = setTimeout(() => setCurrent((c) => c + 1), ms);
     return () => clearTimeout(id);
-  }, [playing, mode, current, total, stanza.lines.length]);
+  }, [isPlaying, mode, current, stanza.lines.length]);
 
   const text = `${poem.title}\n\n${poem.stanzas.map((s) => s.lines.join("\n")).join("\n\n")}\n\n—— ${poem.dedication}`;
 
@@ -254,9 +255,9 @@ function PoemPlayer({ poem, mock }: { poem: Poem; mock: boolean }) {
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <button type="button" onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0}
               className="cursor-pointer rounded-full border border-line-strong px-4 py-2 text-sm disabled:opacity-40">上一节</button>
-            <button type="button" onClick={() => { if (current >= total - 1) setCurrent(0); setPlaying((p) => !p || current >= total - 1); }}
+            <button type="button" onClick={() => { if (atEnd) { setCurrent(0); setPlaying(true); } else setPlaying((p) => !p); }}
               className="cursor-pointer rounded-full bg-gold px-5 py-2 text-sm font-semibold text-on-gold">
-              {playing ? "暂停" : current >= total - 1 ? "重新播放" : "播放"}
+              {isPlaying ? "暂停" : atEnd ? "重新播放" : "播放"}
             </button>
             <button type="button" onClick={() => setCurrent((c) => Math.min(total - 1, c + 1))} disabled={current >= total - 1}
               className="cursor-pointer rounded-full border border-line-strong px-4 py-2 text-sm disabled:opacity-40">下一节</button>
