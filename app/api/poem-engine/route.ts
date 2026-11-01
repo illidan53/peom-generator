@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { examplePoem, generatePoem, PoemOptionsSchema, type TeamProfile } from "@/lib/poem-engine";
+import { exampleJueju, examplePoem, generatePoem, PoemOptionsSchema, type TeamProfile } from "@/lib/poem-engine";
+import { isClaudeCliBackend } from "@/lib/claude-cli";
 
 export const maxDuration = 300;
 
@@ -21,7 +22,8 @@ const Body = z.object({
   direction: z.string().optional(),
 });
 
-const hasKey = () => Boolean(process.env.ANTHROPIC_API_KEY);
+// 本地开发用 claude 命令行，不需要 API key；部署环境才需要
+const hasKey = () => isClaudeCliBackend() || Boolean(process.env.ANTHROPIC_API_KEY);
 
 export async function GET() {
   return Response.json({ hasKey: hasKey() });
@@ -53,7 +55,7 @@ export async function POST(req: Request) {
   };
 
   if (!hasKey()) {
-    return Response.json({ poem: examplePoem, mock: true });
+    return Response.json({ poem: options?.style === "jueju" ? exampleJueju : examplePoem, mock: true });
   }
 
   try {
