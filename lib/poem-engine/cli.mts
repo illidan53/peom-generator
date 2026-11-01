@@ -1,6 +1,6 @@
 /**
  * 本地试跑（需要 ANTHROPIC_API_KEY）：
- *   npx tsx lib/poem-engine/cli.mts [team-profile.json] [--style epic] [--lang en] [--stanzas 5] [--json]
+ *   npx tsx lib/poem-engine/cli.mts [team-profile.json] [--style modern|jueju] [--json]
  * 不传文件时使用示例团队资料；MOCK=1 时不调用 API。
  */
 import { readFileSync } from "node:fs";
@@ -21,8 +21,6 @@ const poem = await generatePoem({
   profile,
   options: {
     style: flag("--style") as PoemOptions["style"] | undefined,
-    language: flag("--lang") as PoemOptions["language"] | undefined,
-    stanzaCount: flag("--stanzas") ? Number(flag("--stanzas")) : undefined,
   },
   onProgress: (n) => process.stderr.write(`\r正在写诗… ${n} 字符`),
 });

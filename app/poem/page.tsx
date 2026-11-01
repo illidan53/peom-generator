@@ -5,7 +5,7 @@ import { DEMO_EVENT, DEMO_TEAM } from "@/lib/team";
 import type { Poem } from "@/lib/poem-engine/contract";
 
 type Member = { name: string; company: string; role: string; selfIntro: string };
-type Style = "modern" | "classical" | "epic" | "playful";
+type Style = "modern" | "jueju";
 
 const blank = (): Member => ({ name: "", company: "", role: "", selfIntro: "" });
 const demoTeam = (): Member[] =>
@@ -19,10 +19,8 @@ const SAMPLE: Member[] = [
 ];
 
 const STYLES: { value: Style; label: string }[] = [
-  { value: "modern", label: "现代诗" },
-  { value: "classical", label: "古风" },
-  { value: "epic", label: "史诗" },
-  { value: "playful", label: "俏皮" },
+  { value: "modern", label: "现代诗（10 行以内）" },
+  { value: "jueju", label: "七言绝句" },
 ];
 
 const input =
@@ -33,7 +31,6 @@ export default function PoemPage() {
   const [teamName, setTeamName] = useState("");
   const [eventName, setEventName] = useState(DEMO_EVENT);
   const [style, setStyle] = useState<Style>("modern");
-  const [stanzaCount, setStanzaCount] = useState(5);
   const [direction, setDirection] = useState("");
 
   const [hasKey, setHasKey] = useState<boolean | null>(null);
@@ -69,7 +66,7 @@ export default function PoemPage() {
           teamName,
           event: { name: eventName || "Claude Workshop Hackathon", date: "2026-11-01" },
           members: filled,
-          options: { style, stanzaCount },
+          options: { style },
           direction,
         }),
       });
@@ -92,7 +89,7 @@ export default function PoemPage() {
           为你的团队写一首诗
         </h1>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
-          填写成员信息，选择风格，Claude 会写一首献给你们和这次活动的中文诗，并逐节播放。
+          填写成员信息，选择风格，Claude 会写一首献给你们和这次活动的中文短诗：10 行以内的现代诗，或一首七言绝句，并逐节播放。
         </p>
         {hasKey === false && (
           <p className="mt-4 inline-block rounded-full border border-line-strong px-4 py-1.5 text-sm text-muted">
@@ -151,13 +148,8 @@ export default function PoemPage() {
           </label>
         </div>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-6">
           <Choice label="风格" options={STYLES} value={style} onChange={setStyle} disabled={working} />
-          <label className="block text-sm font-medium">
-            节数：{stanzaCount}
-            <input type="range" min={2} max={8} value={stanzaCount} disabled={working}
-              onChange={(e) => setStanzaCount(Number(e.target.value))} className="mt-4 w-full accent-[var(--gold)]" />
-          </label>
         </div>
 
         <label className="mt-6 block text-sm font-medium">

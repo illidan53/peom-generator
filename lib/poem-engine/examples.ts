@@ -16,13 +16,24 @@ export const exampleTeamProfile: TeamProfile = {
 export const examplePoem: Poem = {
   title: "四行诗",
   language: "zh",
-  dedication: "献给四行诗队，于 Claude Workshop",
-  narrativeArc: "四个人从各自的山、海、棋盘与跑道出发，在同一个下午汇合，写下一个会发光的应用。",
+  dedication: "献给四行诗队，于 Claude Workshop Hackathon",
+  narrativeArc: "四个人从山、海、棋盘与跑道出发，在同一个下午汇成一条河，写下一个会发光的应用。",
   stanzas: [
-    { focus: "成员 A", mood: "沉稳", imagery: ["山脊", "晨雾", "服务器指示灯"], lines: ["他从山脊上带回晨雾，", "也带回机房里不眠的绿灯，", "一杯咖啡的时间，", "足够让百万请求安然落地。"] },
-    { focus: "成员 B", mood: "温柔", imagery: ["水彩晕染", "海岸线"], lines: ["她把海岸线晕染进按钮，", "让每一次点击都有潮汐的回声，", "颜色替看不见的人说话，", "界面于是学会了温柔。"] },
-    { focus: "成员 C", mood: "深邃", imagery: ["黑白棋子", "星空"], lines: ["黑子白子落在星空里，", "他在梯度的山谷中寻路，", "每一手都是一次试探，", "每一次失败都在教机器思考。"] },
-    { focus: "成员 D", mood: "坚韧", imagery: ["跑道", "终点线", "黎明"], lines: ["四十二公里不是距离，", "是他与黎明的约定，", "产品也是一场长跑，", "终点线后面还有新的起点。"] },
-    { focus: "团队", mood: "热烈", imagery: ["四条河流", "灯火", "代码"], lines: ["山、海、棋盘与跑道，", "在这个下午汇成一条河，", "我们把彼此写进代码，", "让一首诗，学会了发光。"] },
+    { focus: "成员 A、成员 B", mood: "沉稳", imagery: ["山顶的晨雾", "服务器指示灯", "水彩海岸线"], lines: ["成员 A 把山顶的晨雾装进服务器，", "成员 B 把海岸线晕染成按钮，", "一个守着百万次请求，一个替看不见的人说话。"] },
+    { focus: "成员 C、成员 D", mood: "坚韧", imagery: ["星空里的黑白棋子", "黎明的跑道"], lines: ["成员 C 在星空里落下黑白子，", "成员 D 把四十二公里跑成黎明，", "一个教机器思考，一个陪产品长跑。"] },
+    { focus: "团队", mood: "热烈", imagery: ["汇成一条的河", "深夜的屏幕灯光"], lines: ["这个下午，山、海、棋盘与跑道汇成一条河，", "我们把彼此写进代码，", "让一首诗，学会了发光。"] },
+  ],
+};
+
+export const exampleJueju: Poem = {
+  title: "灯前花",
+  language: "zh",
+  dedication: "献给四行诗队，于 Claude Workshop Hackathon",
+  narrativeArc: "山海与棋路各自出发，在一天的黑客松里敲下千行代码，最后在灯下开成一树花。",
+  stanzas: [
+    { focus: "成员 A、成员 B", mood: "沉稳", imagery: ["山巅煮雾", "海上霞光"], lines: ["山巅煮雾海描霞，"] },
+    { focus: "成员 C、成员 D", mood: "坚韧", imagery: ["星河里的棋子", "沙上的脚印"], lines: ["棋落星河步踏沙。"] },
+    { focus: "活动", mood: "专注", imagery: ["键盘", "滚动的代码"], lines: ["一日同敲千行码，"] },
+    { focus: "团队", mood: "热烈", imagery: ["灯下", "一树花开"], lines: ["化作灯前一树花。"] },
   ],
 };
