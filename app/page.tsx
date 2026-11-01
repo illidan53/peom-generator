@@ -13,7 +13,7 @@ const STAGES = [
   { after: 0, text: "正在网上查找你们的资料" },
   { after: 7, text: "正在挑选值得入诗的细节" },
   { after: 15, text: "正在寻找把你们连在一起的线索" },
-  { after: 22, text: "正在写诗" },
+  { after: 22, text: "正在推敲平仄和韵脚" },
 ];
 
 function Icon({ path, className = "h-5 w-5" }: { path: string; className?: string }) {
@@ -125,7 +125,7 @@ export default function Home() {
           <span className="text-gold-strong">一首诗。</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-          告诉我们团队里有谁。Claude 会先了解你们每一个人，再为你们的故事和此刻写一首诗。
+          告诉我们团队里有谁。Claude 会先了解你们每一个人，再为你们和此刻写一首七言绝句。
         </p>
       </header>
 
@@ -134,7 +134,7 @@ export default function Home() {
         {[
           { icon: ICONS.people, title: "介绍团队", text: "每人一个名字，再加一句介绍。" },
           { icon: ICONS.search, title: "Claude 查资料", text: "从网上了解公开的职业背景。" },
-          { icon: ICONS.feather, title: "写成一首诗", text: "一首把你们四个人织在一起的中文诗。" },
+          { icon: ICONS.feather, title: "写成一首绝句", text: "四句七言，起承转合，把你们四个人写在一起。" },
         ].map((s, i) => (
           <li key={s.title} className="flex gap-4 rounded-2xl border border-line bg-ink-raised/60 p-5">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-strong text-gold">
