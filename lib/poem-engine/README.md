@@ -21,7 +21,7 @@ export async function POST(req: Request) {
 }
 ```
 
-- `options`：`style` 为 `modern`（10 行以内的现代诗，默认）或 `jueju`（七言绝句）；`language` 默认 zh，七言绝句总是中文。
+- `options`：`style` 默认 `jueju`（唐诗七言绝句，网页只用这一种）；也支持 `modern`（10 行以内的现代诗）。七言绝句总是中文。
 - `effort`：默认 `high`；现场赶时间可传 `"medium"`。
 - 环境变量：`ANTHROPIC_API_KEY`（必需），`CLAUDE_MODEL`（可选，默认 `claude-opus-5-5`），`MOCK=1` 时直接返回示例诗，不调 API。
 
@@ -40,5 +40,5 @@ export async function POST(req: Request) {
 
 ```bash
 MOCK=1 npx tsx lib/poem-engine/cli.mts
-ANTHROPIC_API_KEY=sk-... npx tsx lib/poem-engine/cli.mts --style jueju --json
+ANTHROPIC_API_KEY=sk-... npx tsx lib/poem-engine/cli.mts --json
 ```
