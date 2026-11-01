@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -9,14 +9,20 @@ const display = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
+const serifSC = Noto_Serif_SC({
+  variable: "--font-display-sc",
+  weight: ["400", "600", "700"],
+  preload: false,
+});
+
 const sans = Inter({
   variable: "--font-ui",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Team Poem",
-  description: "Four people, one poem. Claude researches your team and writes a poem about you and the event.",
+  title: "团队之诗",
+  description: "四个人，一首诗。Claude 了解你们的团队，为你们和这次活动写一首中文诗。",
 };
 
 export const viewport: Viewport = {
@@ -25,7 +31,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} h-full antialiased`}>
+    <html lang="zh-CN" className={`${display.variable} ${serifSC.variable} ${sans.variable} h-full antialiased`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

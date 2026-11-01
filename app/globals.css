@@ -27,8 +27,8 @@
   --color-gold-strong: var(--gold-strong);
   --color-on-gold: var(--on-gold);
   --color-danger: var(--danger);
-  --font-display: var(--font-display), "Cormorant Garamond", Georgia, serif;
-  --font-sans: var(--font-ui), system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-display-sc), "Songti SC", "Noto Serif SC", Georgia, serif;
+  --font-sans: var(--font-ui), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
 }
 
 body {
