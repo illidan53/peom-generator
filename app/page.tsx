@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DEMO_EVENT, DEMO_TEAM, describe } from "@/lib/team";
 
 type Member = { name: string; info: string };
 type Status = "idle" | "working" | "done" | "error";
 
 const empty = (): Member[] => Array.from({ length: 4 }, () => ({ name: "", info: "" }));
+const demoTeam = (): Member[] => DEMO_TEAM.map((m) => ({ name: m.name, info: describe(m) }));
 
 const STAGES = [
   { after: 0, text: "Looking up your team on the web" },
@@ -33,8 +35,8 @@ const ICONS = {
 };
 
 export default function Home() {
-  const [members, setMembers] = useState<Member[]>(empty);
-  const [event, setEvent] = useState("Claude Workshop Hackathon");
+  const [members, setMembers] = useState<Member[]>(demoTeam);
+  const [event, setEvent] = useState(DEMO_EVENT);
   const [poem, setPoem] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -151,7 +153,13 @@ export default function Home() {
       <form onSubmit={generate} className="mt-12 rounded-3xl border border-line bg-ink-raised/70 p-5 shadow-2xl shadow-black/30 backdrop-blur sm:p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="font-display text-3xl font-semibold">Your team</h2>
-          <p className="text-sm text-muted">{filled.length} of 4 added</p>
+          <div className="flex items-center gap-4 text-sm">
+            <span className="text-muted">{filled.length} of 4 added</span>
+            <button type="button" disabled={working} onClick={() => setMembers(demoTeam())}
+              className="min-h-11 cursor-pointer text-gold underline-offset-4 hover:underline disabled:opacity-50">Load our team</button>
+            <button type="button" disabled={working} onClick={() => setMembers(empty())}
+              className="min-h-11 cursor-pointer text-muted underline-offset-4 hover:text-text hover:underline disabled:opacity-50">Clear</button>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
